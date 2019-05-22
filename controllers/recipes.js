@@ -2,16 +2,20 @@ const Recipe = require('../models/recipe')
 
 exports.saveNewRecipe = function (req, res, next) {
   const name = req.body.name;
-  const ingredients = req.body.ingredients
+  const ingredients = req.body.cleanIngredientsList;
+  const cookingSteps = req.body.cookingSteps;
+  console.log(ingredients)
 
   const recipe = new Recipe({
     name: name,
-    ingredients: ingredients
+    ingredients: ingredients,
+    cookingSteps: cookingSteps
   });
 
   recipe.save(function (err) {
     if (err) { return next(err) }
-    res.json({ success: "New Recepie saved" });
+
+    res.json({ success: "Reciep saved" });
   })
 
 }
@@ -20,17 +24,47 @@ exports.saveUpdatedRecipe = function (req, res, next) {
   const id = req.body.id
   const name = req.body.name;
   const ingredients = req.body.ingredients
+  const cookingSteps = req.body.cookingSteps;
 
   Recipe.findById(id, function (err, existingRecipe) {
     if (err) { return next(err) }
 
     existingRecipe.name = name
     existingRecipe.ingredients = ingredients
-    existingRecipe.save(function (error) {
+    existingRecipe.cookingSteps = cookingSteps
+    existingRecipe.save(function (err) {
       if (err) { return next(err) }
+
       res.json({ success: "Recipe Updated" });
     })
 
   })
-
 }
+
+exports.getAllRecipes = function (req, res, next) {
+  Recipe.find(function (err, recipes) {
+    if (err) { return next(err) }
+
+    res.json({ success: recipes })
+  })
+}
+
+exports.getAllRecipesShortInfo = function (req, res, next) {
+  Recipe.find()
+    .limit(10)
+    .select({ _id: 1, name: 1, picture: 1, tags: 1 })
+    .exec(function (err, recipes) {
+      if (err) { return next(err) }
+
+      res.json({ success: recipes })
+    });
+}
+
+exports.getRecipeById = function (req, res, next) {
+  var id = req.body.id;
+  Recipe.findById(id, function (err, recipe) {
+    if (err) { return next(err) }
+
+    res.json({ success: recipe })
+  })
+} 
