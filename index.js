@@ -13,6 +13,7 @@ mongoose.connect('mongodb://localhost:27017/auth', { useNewUrlParser: true });
 app.use(morgan('combined'));
 app.use(cors());
 app.use(bodyParser.json({ type: '*/*' }));
+app.use('/pictures', express.static('Images'))
 router(app)
 
 // Server Setup  

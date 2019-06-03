@@ -10,6 +10,7 @@ const recipeSchema = new Schema({
   lastSaveDate: Date,
   lastSavedBy: String,
   picture: String,
+  pictureData: { data: Buffer, contentType: String },
   tags: Array,
 })
 

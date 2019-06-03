@@ -1,23 +1,25 @@
 const Recipe = require('../models/recipe')
+const fs = require('fs');
 
 exports.saveNewRecipe = function (req, res, next) {
   const name = req.body.name;
+  const picture = req.body.file;
   const ingredients = req.body.cleanIngredientsList;
   const cookingSteps = req.body.cookingSteps;
-  console.log(ingredients)
+  console.log(req.body)
 
   const recipe = new Recipe({
     name: name,
     ingredients: ingredients,
-    cookingSteps: cookingSteps
+    cookingSteps: cookingSteps,
+    picture: ""
   });
 
   recipe.save(function (err) {
     if (err) { return next(err) }
 
-    res.json({ success: "Reciep saved" });
+    res.json({ success: "Recipe saved" });
   })
-
 }
 
 exports.saveUpdatedRecipe = function (req, res, next) {
