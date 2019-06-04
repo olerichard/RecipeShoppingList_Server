@@ -3,16 +3,18 @@ const fs = require('fs');
 
 exports.saveNewRecipe = function (req, res, next) {
   const name = req.body.name;
-  const picture = req.body.file;
-  const ingredients = req.body.cleanIngredientsList;
+  const picture = req.file;
+  const ingredients = JSON.parse(req.body.ingredients);
   const cookingSteps = req.body.cookingSteps;
-  console.log(req.body)
 
   const recipe = new Recipe({
     name: name,
     ingredients: ingredients,
     cookingSteps: cookingSteps,
-    picture: ""
+    pictureData: {
+      data: picture.buffer,
+      contentType: picture.mimetype
+    }
   });
 
   recipe.save(function (err) {

@@ -2,6 +2,8 @@ const Authentication = require('./controllers/authentication');
 const passportService = require('./services/passport');
 const Recipes = require('./controllers/recipes');
 const passport = require('passport');
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 
 
 const requireAuth = passport.authenticate('jwt', { session: false });
@@ -13,7 +15,7 @@ module.exports = function (app) {
   })
   app.post('/signin', requireSignin, Authentication.signin);
   app.post('/signup', Authentication.signup);
-  app.post('/saveNewRecipe', Recipes.saveNewRecipe);
+  app.post('/saveNewRecipe', upload.single("image"), Recipes.saveNewRecipe);
   app.post('/saveUpdatedRecipe', Recipes.saveUpdatedRecipe);
   app.post('/getAllRecipes', Recipes.getAllRecipes);
   app.post('/getAllRecipesShortInfo', Recipes.getAllRecipesShortInfo);
