@@ -13,12 +13,14 @@ module.exports = function (app) {
   app.get('/', requireAuth, function (req, res) {
     res.send({});
   })
-  app.post('/signin', requireSignin, Authentication.signin);
-  app.post('/signup', Authentication.signup);
+
+  app.post('/logIn', requireSignin, Authentication.login);
+  app.post('/createUser', Authentication.createUser);
   app.post('/saveNewRecipe', upload.single("image"), Recipes.saveNewRecipe);
   app.post('/saveUpdatedRecipe', Recipes.saveUpdatedRecipe);
-  app.post('/getAllRecipes', Recipes.getAllRecipes);
-  app.post('/getAllRecipesShortInfo', Recipes.getAllRecipesShortInfo);
-  app.post('/getRecipeById', Recipes.getRecipeById);
+  app.get('/getAllRecipes', Recipes.getAllRecipes);
+  app.get('/getAllRecipesShortInfo', Recipes.getAllRecipesShortInfo);
+  app.get('/getRecipeById', Recipes.getRecipeById);
+  app.post('/getUserById', Authentication.getUserById);
 
 }

@@ -65,7 +65,8 @@ exports.getAllRecipesShortInfo = function (req, res, next) {
 }
 
 exports.getRecipeById = function (req, res, next) {
-  var id = req.body.id;
+  var id = req.query.id;
+  console.log("ID: " + id)
   Recipe.findById(id, function (err, recipe) {
     if (err) { return next(err) }
 
