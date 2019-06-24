@@ -1,5 +1,4 @@
 const Recipe = require('../models/recipe')
-const fs = require('fs');
 
 exports.saveNewRecipe = function (req, res, next) {
   const name = req.body.name;
@@ -11,7 +10,7 @@ exports.saveNewRecipe = function (req, res, next) {
     name: name,
     ingredients: ingredients,
     cookingSteps: cookingSteps,
-    pictureData: {
+    picture: {
       data: picture.buffer,
       contentType: picture.mimetype
     }
@@ -27,12 +26,19 @@ exports.saveNewRecipe = function (req, res, next) {
 exports.saveUpdatedRecipe = function (req, res, next) {
   const id = req.body.id
   const name = req.body.name;
-  const ingredients = req.body.ingredients
+  const ingredients = JSON.parse(req.body.ingredients);
   const cookingSteps = req.body.cookingSteps;
+  const picture = req.file;
 
   Recipe.findById(id, function (err, existingRecipe) {
     if (err) { return next(err) }
 
+    if (picture !== undefined) {
+      existingRecipe.picture = {
+        data: picture.buffer,
+        contentType: picture.mimetype
+      }
+    }
     existingRecipe.name = name
     existingRecipe.ingredients = ingredients
     existingRecipe.cookingSteps = cookingSteps
