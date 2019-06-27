@@ -16,10 +16,10 @@ exports.saveNewRecipe = function (req, res, next) {
     }
   });
 
-  recipe.save(function (err) {
+  recipe.save(function (err, savedRecipe) {
     if (err) { return next(err) }
 
-    res.json({ success: "Recipe saved" });
+    res.json({ state: "Recipe saved", id: savedRecipe._id });
   })
 }
 
@@ -27,8 +27,10 @@ exports.saveUpdatedRecipe = function (req, res, next) {
   const id = req.body.id
   const name = req.body.name;
   const ingredients = JSON.parse(req.body.ingredients);
-  const cookingSteps = req.body.cookingSteps;
+  const cookingSteps = JSON.parse(req.body.cookingSteps);
   const picture = req.file;
+
+  console.log("LOG STEPS:" + cookingSteps)
 
   Recipe.findById(id, function (err, existingRecipe) {
     if (err) { return next(err) }
@@ -42,10 +44,10 @@ exports.saveUpdatedRecipe = function (req, res, next) {
     existingRecipe.name = name
     existingRecipe.ingredients = ingredients
     existingRecipe.cookingSteps = cookingSteps
-    existingRecipe.save(function (err) {
+    existingRecipe.save(function (err, savedRecipe) {
       if (err) { return next(err) }
 
-      res.json({ success: "Recipe Updated" });
+      res.json({ state: "Recipe Updated", id: savedRecipe._id });
     })
 
   })
