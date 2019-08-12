@@ -1,6 +1,7 @@
 const Authentication = require('./controllers/authentication');
 const passportService = require('./services/passport');
 const Recipes = require('./controllers/recipes');
+const ShoppingList = require('./controllers/shoppinglist');
 const passport = require('passport');
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
@@ -22,5 +23,8 @@ module.exports = function (app) {
   app.get('/getAllRecipesShortInfo', Recipes.getAllRecipesShortInfo);
   app.get('/getRecipeById', Recipes.getRecipeById);
   app.post('/getUserById', Authentication.getUserById);
+  app.post('/getShoppingList', ShoppingList.getShoppingList);
+  app.post('/addToShoppingListserById', ShoppingList.addToShoppingList);
+  app.post('/removeFromShoppingList', ShoppingList.removeFromShoppingList);
 
 }
