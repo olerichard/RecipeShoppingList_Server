@@ -30,8 +30,6 @@ exports.saveUpdatedRecipe = function (req, res, next) {
   const cookingSteps = JSON.parse(req.body.cookingSteps);
   const picture = req.file;
 
-  console.log("LOG STEPS:" + cookingSteps)
-
   Recipe.findById(id, function (err, existingRecipe) {
     if (err) { return next(err) }
 

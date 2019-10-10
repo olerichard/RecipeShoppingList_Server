@@ -23,8 +23,8 @@ module.exports = function (app) {
   app.get('/getAllRecipesShortInfo', Recipes.getAllRecipesShortInfo);
   app.get('/getRecipeById', Recipes.getRecipeById);
   app.post('/getUserById', Authentication.getUserById);
-  app.post('/getShoppingList', ShoppingList.getShoppingList);
-  app.post('/addToShoppingListserById', ShoppingList.addToShoppingList);
+  app.post('/getShoppingList', async (req,res,next) =>{ await ShoppingList.getShoppingList(req,res,next) } );
+  app.post('/addToShoppingList', ShoppingList.addToShoppingList);
   app.post('/removeFromShoppingList', ShoppingList.removeFromShoppingList);
 
 }
