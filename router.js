@@ -1,6 +1,7 @@
 const Authentication = require('./controllers/authentication');
 const passportService = require('./services/passport');
 const Recipes = require('./controllers/recipes');
+const Units = require('./controllers/units');
 const ShoppingList = require('./controllers/shoppinglist');
 const passport = require('passport');
 const multer = require('multer');
@@ -22,6 +23,8 @@ module.exports = function (app) {
   app.get('/getAllRecipes', Recipes.getAllRecipes);
   app.get('/getAllRecipesShortInfo', Recipes.getAllRecipesShortInfo);
   app.get('/getRecipeById', Recipes.getRecipeById);
+  app.get('/getUnitAll',Units.getUnitAll)
+  app.get('/getUnitById',Units.GetUnitById)
   app.post('/getUserById', Authentication.getUserById);
   app.post('/getShoppingList', async (req,res,next) =>{ await ShoppingList.getShoppingList(req,res,next) } );
   app.post('/addToShoppingList', ShoppingList.addToShoppingList);
