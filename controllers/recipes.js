@@ -1,21 +1,40 @@
 const Recipe = require('../models/recipe')
+const JwtDecode = require('jwt-decode');
+const User = require('../models/user');
 
-exports.saveNewRecipe = function (req, res, next) {
+exports.saveNewRecipe = async function (req, res, next) {
+  console.log("SAVE RECIPE")
   const name = req.body.name;
   const picture = req.file;
   const ingredients = JSON.parse(req.body.ingredients);
   const cookingSteps = req.body.cookingSteps;
-
+  const tags = req.body.tags;
+  const token = req.headers.authorization.split(' ');
+  const decodedToken = JwtDecode(token[1]);
+  const user = await User.findById(decodedToken.sub);
+  
+  if(user === null || undefined){
+    res.json({error:"User Does not Exist. Can not save without user"})
+    next()
+  }
+  
   const recipe = new Recipe({
     name: name,
     ingredients: ingredients,
     cookingSteps: cookingSteps,
+    createdByUser: user,
+    lastSavedBy: user,
+    createdDate: new Date(Date.now()).toISOString(),
+    createdByUser: user,
+    lastSaveDate: new Date(Date.now()).toISOString(),
+    lastSavedBy: user,
+    tags: tags,
     picture: {
       data: picture.buffer,
       contentType: picture.mimetype
     }
   });
-
+ 
   recipe.save(function (err, savedRecipe) {
     if (err) { return next(err) }
 
@@ -23,12 +42,22 @@ exports.saveNewRecipe = function (req, res, next) {
   })
 }
 
-exports.saveUpdatedRecipe = function (req, res, next) {
+exports.saveUpdatedRecipe = async function (req, res, next) {
   const id = req.body.id
   const name = req.body.name;
   const ingredients = JSON.parse(req.body.ingredients);
   const cookingSteps = JSON.parse(req.body.cookingSteps);
+  const tags = JSON.parse(req.body.tags);
   const picture = req.file;
+
+  const token = req.headers.authorization.split(' ');
+  const decodedToken = JwtDecode(token[1]);
+  const user = await User.findById(decodedToken.sub);
+
+  if(user === null || undefined){
+    res.json({error:"User Does not Exist. Can not update without user"})
+    next()
+  }
 
   Recipe.findById(id, function (err, existingRecipe) {
     if (err) { return next(err) }
@@ -42,6 +71,10 @@ exports.saveUpdatedRecipe = function (req, res, next) {
     existingRecipe.name = name
     existingRecipe.ingredients = ingredients
     existingRecipe.cookingSteps = cookingSteps
+    existingRecipe.lastSaveDate = new Date(Date.now()).toISOString()
+    existingRecipe.lastsavedBy = user
+    existingRecipe.tags = tags
+
     existingRecipe.save(function (err, savedRecipe) {
       if (err) { return next(err) }
 

@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt-nodejs')
 const userSchema = new Schema({
   name: String,
   email: { type: String, unique: true, lowercase: true },
-  password: String
+  password: {type:String, select: false}
 });
 
 userSchema.pre('save', function (next) {

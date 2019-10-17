@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const jwt = require('jwt-simple');
 const config = require('../config');
+const JwtDecode = require('jwt-decode');
 
 function tokenForUser(user) {
   const time = new Date().getTime()
@@ -22,16 +23,12 @@ exports.createUser = function (req, res, next) {
   console.log(req.body)
 
   if (!email || !password || !name) {
-    console.log("test 1")
     return res.status(422).send({ error: 'You must provide email, name and password' })
   }
 
   if (password != passwordReEntry) {
-    console.log("test 2")
     return res.status(422).send({ error: 'Password does not match' })
   }
-
-  console.log("CLEARED TESTS")
 
   User.findOne({ email: email }, function (err, existingUser) {
     if (err) { return next(err); }
@@ -53,18 +50,18 @@ exports.createUser = function (req, res, next) {
     });
 
   });
-
 }
 
-exports.getUserById = function (req, res, next) {
-  var id = req.body.id;
-  console.log("ID: " + id)
-  User.findById(id, function (err, user) {
-    if (err) { return next(err) }
+exports.getUserById = async function (req, res, next) {
+  const token = req.headers.authorization.split(' ');
+  const decodedToken = JwtDecode(token[1]);
+  const user = await User.findById(decodedToken.sub);
+  
+  if(user === null || user === undefined){
+    res.json({error:"User info not found"})
+    return
+  }
 
-    user.password = ""
-    console.log("getUserById Found User")
-    console.log(user)
-    res.json({ user: user })
-  })
+  console.log("ID: " + user._id)
+  res.json({ user: user })
 } 

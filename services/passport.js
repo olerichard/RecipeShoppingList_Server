@@ -10,7 +10,7 @@ const localLogin = new LocalStrategy(localOptions, function (email, password, do
   console.log("Passport localStrategy")
   console.log(email)
   console.log(password)
-  User.findOne({ email: email }, function (err, user) {
+  User.findOne({ email: email }).select('+password').exec(function (err, user) {
     if (err) { return done(err) };
     if (!user) { return done(null, false) };
     console.log("User Found")
@@ -27,12 +27,12 @@ const localLogin = new LocalStrategy(localOptions, function (email, password, do
 });
 
 const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: config.secret
 }
 
 const jwtLogin = new JwtStategy(jwtOptions, function (payload, done) {
-  User.findById(payload.sub, function (err, user) {
+  User.findById(payload.sub).select('+password').exec(function (err, user) {
     if (err) { return done(err, false); }
 
     if (user) {
@@ -41,6 +41,7 @@ const jwtLogin = new JwtStategy(jwtOptions, function (payload, done) {
       done(null, false)
     }
   })
+
 });
 
 passport.use(jwtLogin);

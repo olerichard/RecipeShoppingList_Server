@@ -3,8 +3,7 @@ const Recipe = require('../models/recipe')
 
 exports.getShoppingList = async function (req, res, next) {
   const user = req.body.user;
-
-  console.log("ShoppingList: FindOne user:" + user)
+  const head = req.head; 
   if(user === undefined || user === null || user === ""){
     console.log("ShoppingList: No user exiting")
     res.json({error:"No User"});
@@ -18,7 +17,7 @@ exports.getShoppingList = async function (req, res, next) {
     fetchedShoppinglist.recipes = await getShoppingListRecipesMetaData(fetchedShoppinglist.recipes)
     console.log("ShoppingList: recipes MetaData populated ")
     console.log(fetchedShoppinglist)
-    res.json({shoppingList : fetchedShoppinglist})
+    res.json({success : fetchedShoppinglist})
     return
   }
 
@@ -27,7 +26,7 @@ exports.getShoppingList = async function (req, res, next) {
     userId: user
   });
   saveList(newShoppingList);
-  res.json({ShoppingList : newShoppingList})
+  res.json({success : newShoppingList})
 }
 
 async function getShoppingList(user){
@@ -70,7 +69,7 @@ exports.addToShoppingList = function (req, res, next) {
     list.recipes.push(itemId);
     list.save(function (err, savedList) {
       if (err) { return next(err) }
-      res.json({ shoppingList: savedList })
+      res.json({ success: savedList })
     })
   })
 }
@@ -96,5 +95,5 @@ exports.removeFromShoppingList = async function (req, res, next) {
   console.log("Remaining ShoppingList Recipes:")
   console.log(shoppingList.recipes);
   saveList(shoppingList)
-  res.json({ shoppingList: shoppingList })
+  res.json({ success: shoppingList })
 }
